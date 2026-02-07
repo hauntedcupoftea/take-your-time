@@ -85,9 +85,10 @@
               echo ""
               echo "Devshell loaded. Take Your Time."
               echo ""
-              if [[ $- == *i* ]]; then
-                exec fish
-              fi
+                if [[ $- == *i* ]]; then
+                  USER_SHELL=$(getent passwd $USER | cut -d: -f7)
+                  exec $USER_SHELL
+                fi
             '';
           };
       };
