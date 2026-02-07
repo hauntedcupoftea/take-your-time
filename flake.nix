@@ -52,6 +52,7 @@
             ANDROID_HOME = "${androidComposition.androidsdk}/libexec/android-sdk";
             ANDROID_SDK_ROOT = "${androidComposition.androidsdk}/libexec/android-sdk";
             ANDROID_NDK_ROOT = "${androidComposition.androidsdk}/libexec/android-sdk/ndk/28.2.13676358";
+            GRADLE_OPTS = "-Dorg.gradle.project.android.aapt2FromMavenOverride=${androidComposition.androidsdk}/libexec/android-sdk/build-tools/35.0.0/aapt2";
 
             shellHook = ''
               echo "=================================="
@@ -78,7 +79,8 @@
               echo "To use Waydroid:"
               echo "  1. Start Waydroid: waydroid session start &"
               echo "  2. Show UI: waydroid show-full-ui"
-              echo "  3. Connect ADB: adb connect 192.168.250.2:5555"
+              echo "  3. Connect ADB: adb connect <ip>:5555"
+              echo "  4. Change config to ours: flutter config --android-ask $ANDROID_SDK_ROOT"
               echo "  4. Run Flutter: flutter run"
               echo ""
               echo "Devshell loaded. Take Your Time."
