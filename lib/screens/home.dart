@@ -12,7 +12,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final PageController _pageController = PageController();
-  int _currentPage = 0;
+  int _currentPage = 1;
 
   @override
   void dispose() {
@@ -40,7 +40,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: PageView(
         controller: _pageController,
         onPageChanged: _onPageChanged,
-        children: const [DayStatePage(), CallingCardsPage(), StatsPage()],
+        children: const [CallingCardsPage(), DayStatePage(), StatsPage()],
       ),
       bottomNavigationBar: _buildBottomNav(context),
     );
@@ -59,14 +59,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _navButton(
-                icon: Icons.calendar_today,
-                label: 'TODAY',
+                icon: Icons.style,
+                label: 'CARDS',
                 index: 0,
                 isActive: _currentPage == 0,
               ),
               _navButton(
-                icon: Icons.style,
-                label: 'CARDS',
+                icon: Icons.calendar_today,
+                label: 'TODAY',
                 index: 1,
                 isActive: _currentPage == 1,
               ),
@@ -370,7 +370,7 @@ class DiagonalStripesPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.02)
+      ..color = Colors.white.withValues(alpha: 1)
       ..style = PaintingStyle.fill;
 
     const stripeWidth = 100.0;

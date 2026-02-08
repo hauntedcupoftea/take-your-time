@@ -36,7 +36,7 @@
           pkgs.mkShell {
             buildInputs = with pkgs; [
               flutter
-              jdk17
+              jdk17_headless
               cmake
               ninja
               pkg-config
