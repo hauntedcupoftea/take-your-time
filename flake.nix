@@ -22,7 +22,7 @@
 
         devShells.default = let
           androidComposition = pkgs.androidenv.composeAndroidPackages {
-            platformVersions = ["36"];
+            platformVersions = ["36" "35"];
             buildToolsVersions = ["35.0.0"];
             includeEmulator = false;
             includeSystemImages = false;

@@ -1,0 +1,16 @@
+{
+  "@@locale": "en",
+  "appTitle": "Take Your Time",
+  "@appTitle": {
+    "description": "The application title"
+  },
+  "goToNextBlock": "Go to Next Block",
+  "@goToNextBlock": {
+    "description": "Button to transition to next state"
+  },
+  "ob1": "Block 1",
+  "ft1": "Break 1",
+  "ob2": "Block 2",
+  "ft2": "Break 2",
+  "rst": "Rest"
+}
