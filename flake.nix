@@ -8,6 +8,7 @@
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = ["x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin"];
       perSystem = {
+        lib,
         pkgs,
         system,
         ...
@@ -49,20 +50,19 @@
               androidComposition.androidsdk
             ];
 
+            FLUTTER_ROOT = "${pkgs.flutter}";
             ANDROID_HOME = "${androidComposition.androidsdk}/libexec/android-sdk";
             ANDROID_SDK_ROOT = "${androidComposition.androidsdk}/libexec/android-sdk";
             ANDROID_NDK_ROOT = "${androidComposition.androidsdk}/libexec/android-sdk/ndk/28.2.13676358";
             GRADLE_OPTS = "-Dorg.gradle.project.android.aapt2FromMavenOverride=${androidComposition.androidsdk}/libexec/android-sdk/build-tools/35.0.0/aapt2";
 
             shellHook = ''
-              echo "=================================="
               echo "Take Your Time - Development Shell"
-              echo "=================================="
-              echo ""
-              echo "⚠️  By using this devshell, you automatically accept:"
-              echo "   - Android SDK License"
-              echo "   - Unfree package licenses (Android SDK components)"
-              echo ""
+              echo "---"
+              echo "By using this devshell, you automatically accept:"
+              echo " - Android SDK License"
+              echo " - Unfree package licenses (Android SDK components)"
+              echo "---"
               echo "Android SDK: $ANDROID_SDK_ROOT"
 
               export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [
@@ -77,11 +77,9 @@
 
               echo ""
               echo "To use Waydroid:"
-              echo "  1. Start Waydroid: waydroid session start &"
-              echo "  2. Show UI: waydroid show-full-ui"
-              echo "  3. Connect ADB: adb connect <ip>:5555"
-              echo "  4. Change config to ours: flutter config --android-ask $ANDROID_SDK_ROOT"
-              echo "  4. Run Flutter: flutter run"
+              echo " 1. Show UI: waydroid show-full-ui"
+              echo " 2. Connect ADB: adb connect <ip>:5555 (or set it to auto-connect)"
+              echo " 3. Change config to ours: flutter config --android-ask $ANDROID_SDK_ROOT"
               echo ""
               echo "Devshell loaded. Take Your Time."
               echo ""
