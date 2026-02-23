@@ -5,11 +5,11 @@ import 'l10n/app_localizations.dart';
 import 'screens/home.dart';
 
 void main() {
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(child: TakeYourTimeApp()));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class TakeYourTimeApp extends StatelessWidget {
+  const TakeYourTimeApp({super.key});
 
   @override
   Widget build(BuildContext context) {
