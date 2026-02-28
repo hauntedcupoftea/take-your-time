@@ -1,10 +1,57 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:take_your_time/providers/day_state_provider.dart';
+import 'package:take_your_time/data/database.dart';
+import 'package:take_your_time/providers/repositories.dart';
 import 'package:take_your_time/styling/painters.dart';
+import 'package:take_your_time/widgets/log_state_transition.dart';
 
-class DayStatePage extends ConsumerWidget {
+class DayStatePage extends ConsumerStatefulWidget {
   const DayStatePage({super.key});
+
+  @override
+  ConsumerState<DayStatePage> createState() => _DayStatePageState();
+}
+
+class _DayStatePageState extends ConsumerState<DayStatePage> {
+  Timer? _timer;
+  Duration _elapsed = Duration.zero;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) {
+        setState(() {
+          _updateElapsedTime();
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _updateElapsedTime() async {
+    final currentBlock = await ref
+        .read(timeBlockRepositoryProvider)
+        .getCurrentBlock();
+    if (currentBlock != null) {
+      _elapsed = DateTime.now().difference(currentBlock.startTime);
+    }
+  }
+
+  String _formatDuration(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    if (hours > 0) {
+      return '$hours:${minutes.toString().padLeft(2, '0')}';
+    }
+    return '$minutes:${duration.inSeconds.remainder(60).toString().padLeft(2, '0')}';
+  }
 
   String _getStateName(DayState state) {
     switch (state) {
@@ -35,10 +82,15 @@ class DayStatePage extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final currentState = ref.watch(dayStateProvider);
+  Widget build(BuildContext context) {
+    final currentState = ref.watch(currentDayStateProvider);
     final size = MediaQuery.of(context).size;
     final stateColor = _getStateColor(currentState);
+
+    // Update elapsed time when state changes
+    ref.listen(currentDayStateProvider, (previous, next) {
+      _updateElapsedTime();
+    });
 
     return Container(
       color: Colors.black,
@@ -46,11 +98,9 @@ class DayStatePage extends ConsumerWidget {
         child: Stack(
           children: [
             CustomPaint(size: size, painter: DiagonalStripesPainter()),
-
             Column(
               children: [
                 const SizedBox(height: 40),
-
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -96,9 +146,9 @@ class DayStatePage extends ConsumerWidget {
                                       width: 3,
                                     ),
                                   ),
-                                  child: const Text(
-                                    '0:00',
-                                    style: TextStyle(
+                                  child: Text(
+                                    _formatDuration(_elapsed),
+                                    style: const TextStyle(
                                       fontSize: 24,
                                       fontWeight: FontWeight.w900,
                                       color: Colors.white,
@@ -110,9 +160,7 @@ class DayStatePage extends ConsumerWidget {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 60),
-
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(5, (index) {
@@ -157,12 +205,27 @@ class DayStatePage extends ConsumerWidget {
                     ),
                   ),
                 ),
-
                 Padding(
                   padding: const EdgeInsets.all(24),
                   child: GestureDetector(
-                    onTap: () {
-                      ref.read(dayStateProvider.notifier).goToNext();
+                    onTap: () async {
+                      final currentBlock = await ref
+                          .read(timeBlockRepositoryProvider)
+                          .getCurrentBlock();
+                      final currentState =
+                          currentBlock?.blockType ?? DayState.ob1;
+                      final nextState = currentState.next();
+
+                      if (!context.mounted) return;
+
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) => TransitionModal(
+                          completedBlock: currentState,
+                          nextBlock: nextState,
+                        ),
+                      );
                     },
                     child: Transform.rotate(
                       angle: -0.02,
